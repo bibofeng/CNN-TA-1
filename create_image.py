@@ -4,14 +4,16 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
+
 def make_image(array):
-    data = Image.fromarray(array) 
+    data = Image.fromarray(array)
     return data
+
 
 def get_labels(data):
     data_array = data["Close"].to_numpy()
     labels = np.array([0 for i in range(len(data_array))]).astype("uint8")
-    for i in range(0,len(data_array)-16,1):
+    for i in range(0, len(data_array)-16, 1):
         window = data_array[i:i+15]
         minindex = np.argmin(window)
         maxindex = np.argmax(window)
@@ -19,13 +21,14 @@ def get_labels(data):
         labels[i + maxindex] = 2
     return labels
 
+
 df = pd.read_csv("data.csv")
 df.drop('Date', axis=1, inplace=True)
 np_array = df.to_numpy()
 labels = get_labels(df)
 
 
-root = 'D:/Programing/Python/Image procesing in Finance/Data/BHARTIARTL/' # root data path
+root = 'c:/temp/CNNTA/'  # root data path
 buy = root + 'Buy'
 sell = root + 'Sell'
 hold = root + 'Hold'
@@ -35,31 +38,31 @@ try:
 except:
     print("Directory alredy exist or OSError")
 
-try:  
+try:
     os.mkdir(sell)
 except:
     print("Directory alredy exist or OSError")
 
-try:    
+try:
     os.mkdir(hold)
 except:
     print("Directory alredy exist or OSError")
 
 
-for i in range(0,np.shape(np_array)[0]-14):
+for i in range(0, np.shape(np_array)[0]-14):
     img = np_array[i:i+15]
     img = np.transpose(img)
-    for j in range (0,15):
-        img[j] = (img[j]- np.min(img[j]))/(np.max(img[j]))
+    for j in range(0, 15):
+        img[j] = (img[j] - np.min(img[j]))/(np.max(img[j]))
         img[j] = np.abs(img[j])
     img = np.round(img*255)
-    img.reshape((15,15,1))
+    img.reshape((15, 15, 1))
     img = img.astype('int')
     img = make_image(img)
-    
+
     if (labels[i] == 0):
-        img.save(hold+'/img' +str(i)+'.png')
-    if (labels[i] == 1):    
-        img.save(buy+'/img' +str(i)+'.png')
+        img.save(hold+'/img' + str(i)+'.png')
+    if (labels[i] == 1):
+        img.save(buy+'/img' + str(i)+'.png')
     if (labels[i] == 2):
-        img.save(sell+'/img' +str(i)+'.png')
+        img.save(sell+'/img' + str(i)+'.png')

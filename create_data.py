@@ -1,5 +1,6 @@
+
+import talib as ta  # TA-Lib for calculation of indicators
 import pandas as pd
-import talib as ta # TA-Lib for calculation of indicators
 
 
 def add_indicators(data):
@@ -9,29 +10,34 @@ def add_indicators(data):
     data["ROC"] = ta.ROC(data["Close"])
     data["TEMA"] = ta.TEMA(data["Close"])
     data["CMO"] = ta.CMO(data["Close"])
-    data["SAR"] = ta.SAR(data["High"],data["Low"])
-    data["WILLR"] = ta.WILLR(data["High"],data["Low"],data["Close"],timeperiod = 15)
-    data["CCI"] = ta.CCI(data["High"],data["Low"],data["Close"],timeperiod = 15)
-    data["PPO"] = ta.PPO(data["Close"],fastperiod = 6,slowperiod = 15)
-    data["MACD"] = ta.MACD(data["Close"],fastperiod = 6,slowperiod = 15)[0]
-    a = ta.WMA(data["Close"],timeperiod = 15//2)
+    data["SAR"] = ta.SAR(data["High"], data["Low"])
+    data["WILLR"] = ta.WILLR(data["High"], data["Low"],
+                             data["Close"], timeperiod=15)
+    data["CCI"] = ta.CCI(data["High"], data["Low"],
+                         data["Close"], timeperiod=15)
+    data["PPO"] = ta.PPO(data["Close"], fastperiod=6, slowperiod=15)
+    data["MACD"] = ta.MACD(data["Close"], fastperiod=6, slowperiod=15)[0]
+    a = ta.WMA(data["Close"], timeperiod=15//2)
     b = data["WMA"]
-    data["HMA"] = ta.WMA(2*a - b,timeperiod = int(15**(0.5)))
-    data["ADX"] = ta.ADX(data["High"],data["Low"],data["Close"],timeperiod = 15)
-    data.dropna(inplace = True)
-    
+    data["HMA"] = ta.WMA(2*a - b, timeperiod=int(15**(0.5)))
+    data["ADX"] = ta.ADX(data["High"], data["Low"],
+                         data["Close"], timeperiod=15)
+    data.dropna(inplace=True)
 
-data = pd.read_csv("Data/TTM.csv")
 
-data.dropna(inplace = True) # Drop missing entries
+data = pd.read_csv("Data/AAPL.csv")
 
-data.set_index("Date",inplace = True) # Set Date as the index column 
+data.dropna(inplace=True)  # Drop missing entries
 
-data.drop(labels = ["Close"], axis = 1, inplace = True) # Use Adj Close instead of Close
-data.rename(columns = {"Adj Close":"Close"}, inplace = True)
+data.set_index("Date", inplace=True)  # Set Date as the index column
 
-add_indicators(data) # Add indicators to the dataframe
+# Use Adj Close instead of Close
+data.drop(labels=["Close"], axis=1, inplace=True)
+data.rename(columns={"Adj Close": "Close"}, inplace=True)
 
-data.drop(labels = ["Volume","Low","High"], axis = 1, inplace = True) # Drop Volume column
+add_indicators(data)  # Add indicators to the dataframe
 
-data.to_csv("data.csv") # Save Data as CSV
+data.drop(labels=["Volume", "Low", "High"], axis=1,
+          inplace=True)  # Drop Volume column
+
+data.to_csv("data.csv")  # Save Data as CSV
