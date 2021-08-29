@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 # %%
 temp = CNN()
-temp.summary()
+print(temp.model().summary())
 
 temp.compile(optimizer='adam',
              loss='categorical_crossentropy',
